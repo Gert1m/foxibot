@@ -1,9 +1,10 @@
 from datetime import datetime
-from telebot import TeleBot, types
+from telebot import types
 
+from bot_token import token
 from db import *
 
-bot = TeleBot("7978670535:AAH8GcfngyqpSbPgE7W3Q_CkZ-EK09m7ORg")
+bot = token
 
 
 async def trading():

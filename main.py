@@ -1,11 +1,9 @@
 import asyncio
 
-from telebot.apihelper import send_message
-
 from invistition import *
 from report import report_user
 
-bot = TeleBot("7978670535:AAH8GcfngyqpSbPgE7W3Q_CkZ-EK09m7ORg")
+bot = token
 
 
 async def main_def():
