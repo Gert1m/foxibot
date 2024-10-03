@@ -21,7 +21,6 @@ async def trading():
             coefficient = 0
         in_trade_set_coefficient(-1, coefficient)
     except:
-        print(1111)
         pass
 
 

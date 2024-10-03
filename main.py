@@ -132,8 +132,6 @@ async def main_def():
                 if message.text.lower().split("@")[0] in ['/info', 'инфо', 'информация']:
                     asyncio.run(information(message))
                 asyncio.run(update_user_username(message))
-                if message.text.lower().split("@")[0] in ['/report', 'репорт']:
-                    report_user(message)
         except:
             pass
 
