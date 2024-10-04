@@ -93,7 +93,6 @@ def any_text(message):
         user_id = message.from_user.id
         text = message.text.lower().replace("ё", 'е').split("@")[0]
 
-
         if int(get_from_db("user", "isVip", user_id)) == -1:
             bot.send_message(message.from_user.id, "Пользователь заблокирован!")
             set_in_db("user", "isVip", f"{-2}", user_id)
@@ -149,5 +148,6 @@ def any_text(message):
 
     except:
         pass
+
 
 bot.polling()
