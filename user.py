@@ -9,15 +9,25 @@ async def add_user(message):
     add_in_db("user", "id", f"{message.from_user.id}")
     if message.from_user.username is None:
         set_in_db("user", "username", f"{message.from_user.first_name}", message.from_user.id)
+
     else:
         set_in_db("user", "username", f"{message.from_user.username}", message.from_user.id)
 
     add_in_db("trade", "id", f"{message.from_user.id}")
     if message.from_user.username is None:
         set_in_db("trade", "username", f"{message.from_user.first_name}", message.from_user.id)
+
     else:
         set_in_db("trade", "username", f"{message.from_user.username}", message.from_user.id)
-    set_in_db("user", "version", f"{1.1}", message.from_user.id)
+
+    add_in_db("boss", "id", f"{message.from_user.id}")
+    if message.from_user.username is None:
+        set_in_db("boss", "username", f"{message.from_user.first_name}", message.from_user.id)
+
+    else:
+        set_in_db("boss", "username", f"{message.from_user.username}", message.from_user.id)
+
+    set_in_db("user", "version", f"{1.2}", message.from_user.id)
     bot.send_message(message.chat.id, "Обновление установлено!")
     await information(message)
 
