@@ -1,0 +1,42 @@
+import sqlite3
+
+
+def get_name_coin(value: int):
+    if value % 10 in [2, 3, 4]:
+        name_coin = "лисокойна"
+    elif value % 10 in [5, 6, 7, 8, 9, 0]:
+        name_coin = "лисокойнов"
+    else:
+        name_coin = "лисокойн"
+    return name_coin
+
+
+def get_from_db(file_name: str, value_name: str, user_id: int):
+    connect = sqlite3.connect(f"{file_name}.db")
+    cursor = connect.cursor()
+    table_name_in_file = file_name
+    cursor.execute(f"SELECT {value_name} FROM {table_name_in_file} WHERE id = {user_id}")  # id const
+    value = cursor.fetchone()[0]
+    connect.close()
+    return str(value)
+
+
+def set_in_db(file_name: str, value_name: str, value: str, user_id: int):
+    connect = sqlite3.connect(f"{file_name}.db")
+    cursor = connect.cursor()
+    table_name_in_file = file_name
+    cursor.execute(f"UPDATE {table_name_in_file} SET {value_name} = '{value}' WHERE id = {user_id}")  # id const
+    connect.commit()
+    connect.close()
+
+
+def add_in_db(file_name: str, value_name: str, value: str):
+    try:
+        connect = sqlite3.connect(f"{file_name}.db")
+        cursor = connect.cursor()
+        table_name_in_file = file_name
+        cursor.execute(f"INSERT INTO {table_name_in_file} ({value_name}) VALUES ({value})")
+        connect.commit()
+        connect.close()
+    except:
+        connect.close()
