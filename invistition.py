@@ -154,15 +154,14 @@ async def cancer_deposit(message):
     user_id = message.from_user.id
     username = get_from_db("user", "username", user_id)
     set_in_db("user", "isDeposit", f"{0}", user_id)
-    print(1)
-    bot.send_message(message.from_user.id, f"{username}, вложение отменёно!")
+    bot.send_message(message.message.chat.id, f"{username}, вложение отменёно!")
 
 
 async def cancer_withdraw(message):
     user_id = message.from_user.id
     username = get_from_db("user", "username", user_id)
     set_in_db("user", "isWithdraw", f"{0}", user_id)
-    bot.send_message(message.from_user.id, f"{username}, снятие отменено!")
+    bot.send_message(message.message.chat.id, f"{username}, снятие отменено!")
 
 
 async def bank(message):
