@@ -27,8 +27,6 @@ async def add_user(message):
     else:
         set_in_db("boss", "username", f"{message.from_user.username}", message.from_user.id)
 
-    set_in_db("user", "version", f"{1.2}", message.from_user.id)
-    bot.send_message(message.chat.id, "Обновление установлено!")
     await information(message)
 
 
@@ -50,5 +48,15 @@ async def information(message):
                                    url='https://telegra.ph/Your-foxibot-Informaciya-09-30')).add(
         types.InlineKeyboardButton("Поддержать бота",
                                    url='https://www.donationalerts.com/r/gert1m'))
-    bot.send_message(message.chat.id, f"Информация по использованию лсчк бота.\n{text}",
+    bot.send_message(message.from_user.id, f"Информация по использованию лсчк бота.\n{text}",
+                     reply_markup=inline_buttons)
+
+
+async def vip(message):
+    inline_buttons = types.InlineKeyboardMarkup(row_width=1).add(
+        types.InlineKeyboardButton("Привилегии вип пользователя",
+                                   url='https://telegra.ph/Your-foxibot-vip-info-10-05')).add(
+        types.InlineKeyboardButton("Купить вип",
+                                   url='https://www.donationalerts.com/r/gert1m'))
+    bot.send_message(message.from_user.id, f"Информация про вип статус.",
                      reply_markup=inline_buttons)

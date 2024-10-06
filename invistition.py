@@ -7,7 +7,7 @@ bot = token
 
 
 async def trading():
-    value = int(str(get_all_from_db("trade", "SUM",  "(deposit)")[0])[1:-2])
+    value = int(str(get_all_from_db("trade", "SUM", "(deposit)")[0])[1:-2])
     count = int(str(get_all_from_db("trade", "COUNT", "(deposit)")[0])[1:-2])
 
     coefficient = (2000 - (int(value / (25000 * count) * 100))) / 100
@@ -19,6 +19,7 @@ async def trading():
 
 async def deposit(message):
     user_id = message.from_user.id
+    isVip = int(get_from_db("user", "isVip", user_id))
     deposit_inline_buttons = types.InlineKeyboardMarkup(row_width=1).add(
         types.InlineKeyboardButton("Отменить вклад", callback_data="cancer_deposit"))
     last_deposit = int(get_from_db("trade", "deposit", user_id))
@@ -32,14 +33,10 @@ async def deposit(message):
                      f"Недостаточно места в банке.")
 
     else:
-        if balance > int((5000 - last_deposit) / 0.8) > 0:
-            balance = int((5000 - last_deposit) / 0.8)
-            bot.reply_to(message, f"Введите сумму взноса до {balance} лисокойнов.",
-                         reply_markup=deposit_inline_buttons)
+        balance = int((5000 - last_deposit) / (0.8 if isVip <= 0 else 0.99))
+        bot.reply_to(message, f"Введите сумму взноса до {balance} лисокойнов.",
+                     reply_markup=deposit_inline_buttons)
 
-        elif int((5000 - last_deposit) / 0.8) <= 0:
-            bot.reply_to(message, f"Введите сумму взноса до 0 лисокойнов.",
-                         reply_markup=deposit_inline_buttons)
         set_in_db("trade", "isDeposit", f"{1}", user_id)
 
 
@@ -62,6 +59,7 @@ async def withdraw(message):
 
 async def depositing(message, deposit):
     user_id = message.from_user.id
+    isVip = int(get_from_db("user", "isVip", user_id))
     deposit_inline_buttons = types.InlineKeyboardMarkup(row_width=1).add(
         types.InlineKeyboardButton("Отменить вклад", callback_data="cancer_deposit"))
     isDeposit = int(get_from_db("trade", "isDeposit", user_id))
@@ -76,23 +74,23 @@ async def depositing(message, deposit):
                          f"Минимальный вклад 100 лисокойнов. Попробуйте снова или завершите операцию.",
                          reply_markup=deposit_inline_buttons)
 
-        elif int(deposit * 0.8) + last_deposit > 5000:
+        elif int(deposit * (0.8 if isVip <= 0 else 0.99)) + last_deposit > 5000:
             bot.reply_to(message,
-                         f"Недостаточно места в банке, вы можете положить еще {int((5000 - last_deposit) / 0.8) if int(deposit * 0.8) + last_deposit <= 5000 else 0}",
+                         f"Недостаточно места в банке, вы можете положить еще {int((5000 - last_deposit) / (0.8 if isVip <= 0 else 0.99)) if (int(deposit * (0.8 if isVip <= 0 else 0.99)) + last_deposit) <= 5000 else 0}",
                          reply_markup=deposit_inline_buttons)
 
         else:
             if isWithdraw != 1:
                 if deposit <= balance:
-                    set_in_db("trade", "deposit", f"{int(last_deposit + deposit - deposit * 0.2)}", user_id)
+                    set_in_db("trade", "deposit", f"{int(last_deposit + deposit - deposit * (0.2 if isVip <= 0 else 0.01))}", user_id)
                     set_in_db("trade", "deposit",
-                              f"{int(get_from_db("trade", "deposit", -1)) + int(deposit * 0.2)}", -1)
+                              f"{int(get_from_db("trade", "deposit", -1)) + int(deposit * (0.2 if isVip <= 0 else 0.01))}", -1)
                     set_in_db("trade", "coefficient", f"{coefficient}", user_id)
                     set_in_db("trade", "isWithdraw", f"{0}", user_id)
                     set_in_db("user", "balance", f"{balance - deposit}", user_id)
                     name_coin = get_name_coin(int(deposit / coefficient))
                     bot.reply_to(message,
-                                 f"Успех! Лисокойны вложены в банк под {coefficient}%. Сейчас ваш банк составляет {int(last_deposit + deposit - deposit * 0.2)} {name_coin}.")
+                                 f"Успех! Лисокойны вложены в банк под {coefficient}%. Сейчас ваш банк составляет {int(last_deposit + deposit - deposit * (0.2 if isVip <= 0 else 0.01))} {name_coin}.")
 
                 else:
                     bot.reply_to(message,
