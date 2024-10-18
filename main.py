@@ -6,61 +6,59 @@ from boss import *
 
 bot = token
 
-
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
-    # try:
-    user_id = call.from_user.id
-    if int(get_from_db("user", "isVip", user_id)) == -1:
-        bot.send_message(user_id, "Пользователь заблокирован!")
-        set_in_db("user", "isVip", f"{-2}", user_id)
+    try:
+        user_id = call.from_user.id
+        if int(get_from_db("user", "isVip", user_id)) == -1:
+            bot.send_message(user_id, "Пользователь заблокирован!")
+            set_in_db("user", "isVip", f"{-2}", user_id)
 
-    elif int(get_from_db("user", "isVip", user_id)) in range(0, 3):
-        if call.from_user.id == call.message.reply_to_message.from_user.id:
-            if call.message:
-                if call.data == "upgrade":
-                    asyncio.run(upgrade(call.message.reply_to_message))
-                    bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+        elif int(get_from_db("user", "isVip", user_id)) in range(0, 3):
+            if call.from_user.id == call.message.reply_to_message.from_user.id:
+                if call.message:
+                    if call.data == "upgrade":
+                        asyncio.run(upgrade(call.message.reply_to_message))
+                        bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
-                if call.data == "crit_up":
-                    asyncio.run(crit_up(call))
+                    elif call.data == "crit_up":
+                        asyncio.run(crit_up(call))
 
-                if call.data == "damage_up":
-                    asyncio.run(damage_up(call))
+                    elif call.data == "damage_up":
+                        asyncio.run(damage_up(call))
 
-                if call.data == "vision_up":
-                    asyncio.run(vision_up(call))
+                    elif call.data == "vision_up":
+                        asyncio.run(vision_up(call))
 
-                if call.data == "crit":
-                    buttons = types.InlineKeyboardMarkup(row_width=1).add(
-                        types.InlineKeyboardButton("Подтвердить", callback_data="crit_up")).add(
-                        types.InlineKeyboardButton("Отмена", callback_data="upgrade"))
-                    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                                          text="Вы точно хотите увеличить крит. шанс?", reply_markup=buttons)
+                    elif call.data == "crit":
+                        buttons = types.InlineKeyboardMarkup(row_width=1).add(
+                            types.InlineKeyboardButton("Подтвердить", callback_data="crit_up")).add(
+                            types.InlineKeyboardButton("Отмена", callback_data="upgrade"))
+                        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                              text="Вы точно хотите увеличить крит. шанс?", reply_markup=buttons)
 
-                if call.data == "damage":
-                    buttons = types.InlineKeyboardMarkup(row_width=1).add(
-                        types.InlineKeyboardButton("Подтвердить", callback_data="damage_up")).add(
-                        types.InlineKeyboardButton("Отмена", callback_data="upgrade"))
-                    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                                          text="Вы точно хотите увеличить урон?", reply_markup=buttons)
+                    elif call.data == "damage":
+                        buttons = types.InlineKeyboardMarkup(row_width=1).add(
+                            types.InlineKeyboardButton("Подтвердить", callback_data="damage_up")).add(
+                            types.InlineKeyboardButton("Отмена", callback_data="upgrade"))
+                        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                              text="Вы точно хотите увеличить урон?", reply_markup=buttons)
 
-                if call.data == "vision":
-                    buttons = types.InlineKeyboardMarkup(row_width=1).add(
-                        types.InlineKeyboardButton("Подтвердить", callback_data="vision_up")).add(
-                        types.InlineKeyboardButton("Отмена", callback_data="upgrade"))
-                    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                                          text="Вы точно хотите увеличить скрытность?", reply_markup=buttons)
+                    elif call.data == "vision":
+                        buttons = types.InlineKeyboardMarkup(row_width=1).add(
+                            types.InlineKeyboardButton("Подтвердить", callback_data="vision_up")).add(
+                            types.InlineKeyboardButton("Отмена", callback_data="upgrade"))
+                        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                              text="Вы точно хотите увеличить скрытность?", reply_markup=buttons)
 
-                if call.data == "cancer_deposit" and int(get_from_db("trade", "isDeposit", user_id)) != 0:
-                    asyncio.run(cancer_deposit(call))
+                    elif call.data == "cancer_deposit" and int(get_from_db("trade", "isDeposit", user_id)) != 0:
+                        asyncio.run(cancer_deposit(call))
 
-                if call.data == "cancer_withdraw" and int(get_from_db("trade", "isWithdraw", user_id)) != 0:
-                    asyncio.run(cancer_withdraw(call))
+                    elif call.data == "cancer_withdraw" and int(get_from_db("trade", "isWithdraw", user_id)) != 0:
+                        asyncio.run(cancer_withdraw(call))
 
-
-# except:
-#     print("call except")
+    except:
+        print("call except")
 
 
 @bot.message_handler(content_types='text')

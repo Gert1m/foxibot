@@ -26,7 +26,7 @@ async def add_user(message):
 
     else:
         set_in_db("boss", "username", f"{message.from_user.username}", message.from_user.id)
-
+    bot.reply_to(message, "Бот обновлён, информация по использованию отправлена в лс бота.", parse_mode='html')
     await information(message)
 
 
@@ -38,25 +38,26 @@ async def balance(message):
 
 
 async def information(message):
-    version = float(get_from_db("user", "version", message.from_user.id))
-    if version != 1.1:
-        text = "Вы используете старую версию бота, некоторые функции могут быть недоступны.\n\nЧтобы обновится до последней версии напишите /start"
-    else:
-        text = "У вас последняя версия бота."
     inline_buttons = types.InlineKeyboardMarkup(row_width=1).add(
         types.InlineKeyboardButton("Информация",
                                    url='https://telegra.ph/Your-foxibot-Informaciya-09-30')).add(
         types.InlineKeyboardButton("Поддержать бота",
                                    url='https://www.donationalerts.com/r/gert1m'))
-    bot.send_message(message.from_user.id, f"Информация по использованию лсчк бота.\n{text}",
+    bot.send_message(message.from_user.id, f"Информация по использованию лсчк бота.",
                      reply_markup=inline_buttons)
 
 
 async def vip(message):
+    user_id = message.from_user.id
     inline_buttons = types.InlineKeyboardMarkup(row_width=1).add(
         types.InlineKeyboardButton("Привилегии вип пользователя",
-                                   url='https://telegra.ph/Your-foxibot-vip-info-10-05')).add(
-        types.InlineKeyboardButton("Купить вип",
-                                   url='https://www.donationalerts.com/r/gert1m'))
-    bot.send_message(message.from_user.id, f"Информация про вип статус.",
+                                   url='https://telegra.ph/Your-foxibot-vip-info-10-05'))
+    if int(get_from_db("user", "isVip", user_id)) < 1:
+        inline_buttons = types.InlineKeyboardMarkup(row_width=1).add(
+            types.InlineKeyboardButton("Привилегии вип пользователя",
+                                       url='https://telegra.ph/Your-foxibot-vip-info-10-05')).add(
+            types.InlineKeyboardButton("Купить вип",
+                                       url='https://www.donationalerts.com/r/gert1m'))
+    bot.send_message(user_id,
+                     f"Информация про вип статус. {"\nВы вип пользователь!" if int(get_from_db("user", "isVip", user_id)) > 0 else ""}",
                      reply_markup=inline_buttons)

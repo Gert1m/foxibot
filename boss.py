@@ -7,8 +7,6 @@ from db import *
 from time import time
 from random import randint
 
-from user import balance
-
 bot = token
 
 
@@ -48,7 +46,7 @@ async def attack(message):
     if int(get_from_db("boss", "damage", -1)) <= 0:
         username = get_from_db("user", "username", user_id)
         damage = int(get_from_db("boss", "damage", user_id))
-        bot.send_message(message.chat.id,
+        bot.reply_to(message,
                          f"{username}, вы убили босса!\nНанесённый урон: {damage}\nКоличество успешных атак: {combo}")
         set_in_db("boss",
                   "reward",
@@ -71,7 +69,7 @@ async def attack(message):
     else:
         username = get_from_db("user", "username", user_id)
         damage = int(get_from_db("boss", "damage", user_id))
-        bot.send_message(message.chat.id,
+        bot.reply_to(message,
                          f"{username}, вы боролись изо всех сил, но сегодня зло победило добро. Подождите немного времени и возьмите реванш у босса!\n\nНанесённый урон: {damage}\nКоличество успешных атак: {combo}")
         set_in_db("boss",
                   "reward",
@@ -89,10 +87,10 @@ async def boss_reward():
             user_id = int(str(player_list[i])[1:-2])
             bot.send_message(user_id, "Босс повержен! Все пользователи получили награду.")
             set_in_db("user", "balance",
-                      f"{int(get_from_db("user", "balance", user_id)) + int(get_from_db("boss", "reward", user_id) // 10)}",
+                      f"{int(get_from_db("user", "balance", user_id)) + int(get_from_db("boss", "reward", user_id))// 10}",
                       user_id)
             set_in_db("boss", "reward", f"{0}", user_id)
-            set_in_db("boss", "attack_time", f"{0}", user_id)
+            # set_in_db("boss", "attack_time", f"{0}", user_id)
             set_in_db("boss", "combo", f"{0}", user_id)
             set_in_db("boss", "damage", f"{0}", user_id)
     count = int(str(get_all_from_db("boss", "COUNT", "(id)")[0])[1:-2])

@@ -41,12 +41,12 @@ def set_in_db(file_name: str, value_name: str, value: str, user_id: int):
 
 
 def add_in_db(file_name: str, value_name: str, value: str):
+    connect = sqlite3.connect(f"{file_name}.db")
+    cursor = connect.cursor()
+    table_name_in_file = file_name
     try:
-        connect = sqlite3.connect(f"{file_name}.db")
-        cursor = connect.cursor()
-        table_name_in_file = file_name
         cursor.execute(f"INSERT INTO {table_name_in_file} ({value_name}) VALUES ({value})")
-        connect.commit()
-        connect.close()
     except:
-        connect.close()
+        pass
+    connect.commit()
+    connect.close()
