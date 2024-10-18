@@ -3,6 +3,7 @@ import asyncio
 from invistition import *
 from user import *
 from boss import *
+from top import top
 
 bot = token
 
@@ -64,7 +65,7 @@ def callback_inline(call):
                     elif call.data == "claim_reward" and int(get_from_db("boss", "reward", user_id)) > 0:
                         user_id = call.from_user.id
                         set_in_db("user", "balance",
-                                  f"{int(get_from_db("user", "balance", user_id)) + int(get_from_db("boss", "reward", user_id))}",
+                                  f"{int(get_from_db("user", "balance", user_id)) + int(get_from_db("boss", "reward", user_id))//10}",
                                   user_id)
                         set_in_db("boss", "reward", f"{0}", user_id)
                         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
@@ -79,13 +80,15 @@ def any_text(message):
     try:
         user_id = message.from_user.id
         text = message.text.lower().replace("ё", 'е').replace("@your_foxibot", "")
-        print(text)
 
         if text == "/start":
             asyncio.run(add_user(message))
 
         elif text == "/vip":
             asyncio.run(vip(message))
+
+        elif text == "/top":
+            asyncio.run(top(message))
 
         isVip = int(get_from_db("user", "isVip", user_id))
         if isVip == -1:
@@ -130,7 +133,7 @@ def any_text(message):
             elif text in ['скрытность+']:
                 asyncio.run(vision_up(message))
 
-            elif text in ['ребитх', '/rebith']:
+            elif text in ['ребитх', '/rebirth']:
                 asyncio.run(rebith(message))
 
             elif text in ['ребитх+']:

@@ -3,11 +3,11 @@ import sqlite3
 
 def get_name_coin(value: int):
     if value % 10 in [2, 3, 4]:
-        name_coin = "лисокойна"
+        name_coin = "а"
     elif value % 10 in [5, 6, 7, 8, 9, 0]:
-        name_coin = "лисокойнов"
+        name_coin = "ов"
     else:
-        name_coin = "лисокойн"
+        name_coin = ""
     return name_coin
 
 

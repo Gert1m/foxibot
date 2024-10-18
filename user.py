@@ -33,8 +33,7 @@ async def add_user(message):
 async def balance(message):
     user_id = message.from_user.id
     balance = int(get_from_db("user", "balance", user_id))
-    name_coin = get_name_coin(balance)
-    bot.reply_to(message, f"Ваш баланс составляет {balance} {name_coin}")
+    bot.reply_to(message, f"Ваш баланс составляет {balance} {"лисокойн" + get_name_coin(balance)}")
 
 
 async def information(message):

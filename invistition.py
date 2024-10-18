@@ -47,9 +47,8 @@ async def withdraw(message):
     deposit = int(get_from_db("trade", "deposit", user_id))
 
     if deposit > 0:
-        name_coin = get_name_coin(deposit)
         bot.reply_to(message,
-                     f"Сколько лисокойнов хотите забрать из банка? На данный момент в банке хранится {deposit} {name_coin}.",
+                     f"Сколько лисокойнов хотите забрать из банка? На данный момент в банке хранится {deposit} {"лисокойн" + get_name_coin(deposit)}.",
                      reply_markup=withdraw_inline_buttons)
         set_in_db("trade", "isWithdraw", f"{1}", user_id)
 
@@ -90,9 +89,8 @@ async def depositing(message, deposit):
                     set_in_db("trade", "coefficient", f"{coefficient}", user_id)
                     set_in_db("trade", "isWithdraw", f"{0}", user_id)
                     set_in_db("user", "balance", f"{balance - deposit}", user_id)
-                    name_coin = get_name_coin(int(deposit / coefficient))
                     bot.reply_to(message,
-                                 f"Успех! Лисокойны вложены в банк под {coefficient}%. Сейчас ваш банк составляет {int(last_deposit + deposit - deposit * (0.2 if isVip <= 0 else 0.01))} {name_coin}.")
+                                 f"Успех! Лисокойны вложены в банк под {coefficient}%. Сейчас ваш банк составляет {int(last_deposit + deposit - deposit * (0.2 if isVip <= 0 else 0.01))} {"лисокойн" + get_name_coin(int(deposit / coefficient))}.")
 
                 else:
                     bot.reply_to(message,
@@ -117,8 +115,7 @@ async def withdrawing(message, withdraw):
                 set_in_db("trade", "coefficient", f"{int(coefficient * 100) / 100}", user_id)
                 set_in_db("trade", "isWithdraw", f"{0}", user_id)
                 set_in_db("user", "balance", f"{int(balance + withdraw)}", user_id)
-                name_coin = get_name_coin(int(withdraw))
-                bot.reply_to(message, f"Успех! Вы забрали {int(withdraw)} {name_coin}.")
+                bot.reply_to(message, f"Успех! Вы забрали {int(withdraw)} {"лисокойн" + get_name_coin(int(withdraw))}.")
 
             else:
                 bot.reply_to(message,
@@ -146,9 +143,9 @@ async def bank(message):
     name_coin = get_name_coin(bank)
     coefficient = int(float(get_from_db("trade", "coefficient", user_id)) * 100) / 100
     if bank != 0:
-        bot.reply_to(message, f"В вашем банке {bank} {name_coin} под {coefficient}% в день.")
+        bot.reply_to(message, f"В вашем банке {bank} {"лисокойн" + name_coin} под {coefficient}% в день.")
     else:
-        bot.reply_to(message, f"В вашем банке {bank} {name_coin}.")
+        bot.reply_to(message, f"В вашем банке {bank} {"лисокойн" + name_coin}.")
 
 
 async def farm(user_id):
