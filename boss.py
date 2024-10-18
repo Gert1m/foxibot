@@ -105,9 +105,9 @@ async def upgrade(message):
     lvlVision = int(get_from_db("boss", "lvlVision", user_id))
     lvlCrit = int(get_from_db("boss", "lvlCrit", user_id))
 
-    set_in_db("boss", "costCrit", f"{int(120 * (1.5 ** (lvlCrit + 1))) * (1 + rebith / 4)}", user_id)
-    set_in_db("boss", "costVision", f"{int(240 * (1.5 ** (lvlVision + 1))) * (1 + rebith / 4)}", user_id)
-    set_in_db("boss", "costDamage", f"{int(90 * (1.5 ** (lvlDamage + 1))) * (1 + rebith / 4)}", user_id)
+    set_in_db("boss", "costCrit", f"{int(120 * (1.5 ** lvlCrit)) * (1 + rebith / 4)}", user_id)
+    set_in_db("boss", "costVision", f"{int(240 * (1.5 **    lvlVision)) * (1 + rebith / 4)}", user_id)
+    set_in_db("boss", "costDamage", f"{int(90 * (1.5 ** lvlDamage)) * (1 + rebith / 4)}", user_id)
 
     costDamage = int(get_from_db("boss", "costDamage", user_id))
     costVision = int(get_from_db("boss", "costVision", user_id))
