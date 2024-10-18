@@ -6,6 +6,7 @@ from boss import *
 
 bot = token
 
+
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
     try:
@@ -57,8 +58,20 @@ def callback_inline(call):
                     elif call.data == "cancer_withdraw" and int(get_from_db("trade", "isWithdraw", user_id)) != 0:
                         asyncio.run(cancer_withdraw(call))
 
+                    elif call.data == "rebith":
+                        asyncio.run(do_rebith(call))
+
+                    elif call.data == "claim_reward" and int(get_from_db("boss", "reward", user_id)) > 0:
+                        user_id = call.from_user.id
+                        set_in_db("user", "balance",
+                                  f"{int(get_from_db("user", "balance", user_id)) + int(get_from_db("boss", "reward", user_id))}",
+                                  user_id)
+                        set_in_db("boss", "reward", f"{0}", user_id)
+                        bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+                                              text=f"{get_from_db("user", "username", user_id)}, награда собрана!")
+
     except:
-        print("call except")
+        pass
 
 
 @bot.message_handler(content_types='text')
@@ -66,6 +79,7 @@ def any_text(message):
     try:
         user_id = message.from_user.id
         text = message.text.lower().replace("ё", 'е').replace("@your_foxibot", "")
+        print(text)
 
         if text == "/start":
             asyncio.run(add_user(message))
@@ -116,6 +130,12 @@ def any_text(message):
             elif text in ['скрытность+']:
                 asyncio.run(vision_up(message))
 
+            elif text in ['ребитх', '/rebith']:
+                asyncio.run(rebith(message))
+
+            elif text in ['ребитх+']:
+                asyncio.run(do_rebith(message))
+
             elif text in ['положить', 'внести', '/deposit']:
                 asyncio.run(trading())
                 asyncio.run(deposit(message))
@@ -137,10 +157,20 @@ def any_text(message):
                 asyncio.run(boss(message))
 
             elif text in ['/attack', 'бить', 'рейд', 'атака']:
+                lvlVision = int(get_from_db("boss", "lvlVision", user_id))
+                lvlDamage = int(get_from_db("boss", "lvlDamage", user_id))
+                lvlCrit = int(get_from_db("boss", "lvlCrit", user_id))
+                balance_ = int(get_from_db("user", "balance", user_id))
+                rebith_ = int(get_from_db("user", "rebith", user_id))
                 if int(time()) > int(get_from_db("boss", "attack_time", user_id)):
-                    set_in_db("boss", "attack_time",
-                              f"{int(time()) + (3600 - 900 * isVip)}", user_id)
-                    asyncio.run(attack(message))
+                    if lvlVision == 5 and lvlCrit == 10 and lvlDamage == 10 and balance_ > (
+                            450 + 450 * (1 + rebith_ / 10 * 3)):
+                        bot.reply_to(message,
+                                     f"В целях баланса системы вы не можете бить босса если вам хватает на ребитх, пожалуйста сделайте ребитх.")
+                    else:
+                        set_in_db("boss", "attack_time",
+                                  f"{int(time()) + (3600 - 900 * isVip)}", user_id)
+                        asyncio.run(attack(message))
                 else:
                     asyncio.run(wait(message))
 

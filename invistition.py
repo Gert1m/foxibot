@@ -10,7 +10,7 @@ async def trading():
     value = int(str(get_all_from_db("trade", "SUM", "(deposit)")[0])[1:-2])
     count = int(str(get_all_from_db("trade", "COUNT", "(deposit)")[0])[1:-2])
 
-    coefficient = (2000 - (int(value / (25000 * count) * 100))) / 100
+    coefficient = (2000 - (int(value / (250 * count) * 100))) / 100
 
     if coefficient < 0:
         coefficient = 0
@@ -82,9 +82,11 @@ async def depositing(message, deposit):
         else:
             if isWithdraw != 1:
                 if deposit <= balance:
-                    set_in_db("trade", "deposit", f"{int(last_deposit + deposit - deposit * (0.2 if isVip <= 0 else 0.01))}", user_id)
                     set_in_db("trade", "deposit",
-                              f"{int(get_from_db("trade", "deposit", -1)) + int(deposit * (0.2 if isVip <= 0 else 0.01))}", -1)
+                              f"{int(last_deposit + deposit - deposit * (0.2 if isVip <= 0 else 0.01))}", user_id)
+                    set_in_db("trade", "deposit",
+                              f"{int(get_from_db("trade", "deposit", -1)) + int(deposit * (0.2 if isVip <= 0 else 0.01))}",
+                              -1)
                     set_in_db("trade", "coefficient", f"{coefficient}", user_id)
                     set_in_db("trade", "isWithdraw", f"{0}", user_id)
                     set_in_db("user", "balance", f"{balance - deposit}", user_id)
