@@ -81,14 +81,14 @@ async def boss_reward():
     player_list = get_all_from_db("boss", "", "id")
     for i in range(len(player_list)):
         if int(str(player_list[i])[1:-2]) > 0 and int(
-                get_from_db("boss", "reward", int(str(player_list[i])[1:-2]))) > 0:
+                get_from_db("boss", "reward", int(str(player_list[i])[1:-2])))//3 > 0:
             user_id = int(str(player_list[i])[1:-2])
             try:
                 bot.send_message(user_id, "Босс повержен! Все пользователи получили награду.")
             except:
                 pass
             set_in_db("user", "balance",
-                      f"{int(get_from_db("user", "balance", user_id)) + int(get_from_db("boss", "reward", user_id)) // 10}",
+                      f"{int(get_from_db("user", "balance", user_id)) + int(get_from_db("boss", "reward", user_id)) // 3}",
                       user_id)
             set_in_db("boss", "reward", f"{0}", user_id)
             set_in_db("boss", "combo", f"{0}", user_id)
@@ -143,10 +143,10 @@ async def crit_up(message):
     buttons = InlineKeyboardMarkup(row_width=1).add(
         InlineKeyboardButton("Другие улучшения", callback_data="upgrade"))
 
-    if balance > costCrit:
-        set_in_db("user", "balance", f"{balance - int(int(120 * (1.5 ** (lvlCrit + 1))) * (1 + rebith / 4))}", user_id)
-        set_in_db("boss", "costCrit", f"{int(int(120 * (1.5 ** (lvlCrit + 1))) * (1 + rebith / 4))}", user_id)
+    if balance >= costCrit:
+        set_in_db("user", "balance", f"{balance - costCrit}", user_id)
         set_in_db("boss", "lvlCrit", f"{lvlCrit + 1}", user_id)
+        set_in_db("boss", "costCrit", f"{int(int(120 * (1.5 ** (lvlCrit + 1))) * (1 + rebith / 4))}", user_id)
         try:
             bot.edit_message_text(chat_id=message.message.chat.id, message_id=message.message.message_id, text="Успех!",
                                   reply_markup=buttons)
@@ -169,11 +169,11 @@ async def vision_up(message):
     buttons = InlineKeyboardMarkup(row_width=1).add(
         InlineKeyboardButton("Другие улучшения", callback_data="upgrade"))
 
-    if balance > costVision:
-        set_in_db("user", "balance", f"{balance - int(int(240 * (1.5 ** (lvlVision + 1))) * (1 + rebith / 4))}",
+    if balance >= costVision:
+        set_in_db("user", "balance", f"{balance - costVision}",
                   user_id)
-        set_in_db("boss", "costVision", f"{int(int(240 * (1.5 ** (lvlVision + 1))) * (1 + rebith / 4))}", user_id)
         set_in_db("boss", "lvlVision", f"{lvlVision + 1}", user_id)
+        set_in_db("boss", "costVision", f"{int(int(240 * (1.5 ** (lvlVision + 1))) * (1 + rebith / 4))}", user_id)
         try:
             bot.edit_message_text(chat_id=message.message.chat.id, message_id=message.message.message_id, text="Успех!",
                                   reply_markup=buttons)
@@ -196,10 +196,10 @@ async def damage_up(message):
     buttons = InlineKeyboardMarkup(row_width=1).add(
         InlineKeyboardButton("Другие улучшения", callback_data="upgrade"))
 
-    if balance > costDamage:
-        set_in_db("user", "balance", f"{balance - int(int(90 * (1.5 ** (lvlDamage + 1))) * (1 + rebith / 4))}", user_id)
-        set_in_db("boss", "costDamage", f"{int(int(90 * (1.5 ** (lvlDamage + 1))) * (1 + rebith / 4))}", user_id)
+    if balance >= costDamage:
+        set_in_db("user", "balance", f"{balance - costDamage}", user_id)
         set_in_db("boss", "lvlDamage", f"{lvlDamage + 1}", user_id)
+        set_in_db("boss", "costDamage", f"{int(int(90 * (1.5 ** (lvlDamage + 1))) * (1 + rebith / 4))}", user_id)
         try:
             bot.edit_message_text(chat_id=message.message.chat.id, message_id=message.message.message_id, text="Успех!",
                                   reply_markup=buttons)
@@ -226,7 +226,7 @@ async def rebith(message):
 
     if lvlVision == 5 and lvlCrit == 10 and lvlDamage == 10:
         bot.reply_to(message,
-                     f"Вы хотите сделать ребитх? Это сбросит весь ваш текущий прогресс но даст небольшой бонус в дальнейшем.\nЦена ребитха {450 + 450 * int(1 + rebith / 10 * 3)}.",
+                     f"Вы хотите сделать ребитх? Это сбросит весь ваш текущий прогресс но даст небольшой бонус в дальнейшем.\nЦена ребитха {int(450 + 450 * (1 + rebith / 10 * 3))}.",
                      reply_markap=buttons)
     else:
         bot.reply_to(message, f"Чтобы сделать ребитх надо сначала улучшить все атрибуты в /upgrade до максимума.")
@@ -241,14 +241,15 @@ async def do_rebith(message):
     lvlCrit = int(get_from_db("boss", "lvlCrit", user_id))
 
     if lvlVision == 5 and lvlCrit == 10 and lvlDamage == 10:
-        if balance >= (450 + 450 * (1 + rebith / 10 * 3)):
-            set_in_db("user", "balance", f"{balance - (450 + 450 * int(1 + rebith / 10 * 3))}", user_id)
+        if balance >= int(450 + 450 * (1 + rebith / 10 * 3)):
+            set_in_db("user", "balance", f"{balance - int(450 + 450 * (1 + rebith / 10 * 3))}", user_id)
             set_in_db("user", "rebith", f"{rebith + 1}", user_id)
             set_in_db("boss", "attack_time", f"{0}", user_id)
             set_in_db("boss", "lvlVision", f"{0}", user_id)
             set_in_db("boss", "lvlDamage", f"{0}", user_id)
             set_in_db("boss", "lvlCrit", f"{0}", user_id)
             set_in_db("user", "balance", f"{0}", user_id)
+            set_in_db("trade", "deposit", f"{0}", user_id)
             try:
                 bot.edit_message_text(chat_id=message.message.chat.id, message_id=message.message.message_id,
                                       text="Успех!.")

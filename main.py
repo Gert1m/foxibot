@@ -3,7 +3,7 @@ import asyncio
 from invistition import *
 from user import *
 from boss import *
-from top import top
+from top import *
 
 bot = token
 
@@ -65,11 +65,18 @@ def callback_inline(call):
                     elif call.data == "claim_reward" and int(get_from_db("boss", "reward", user_id)) > 0:
                         user_id = call.from_user.id
                         set_in_db("user", "balance",
-                                  f"{int(get_from_db("user", "balance", user_id)) + int(get_from_db("boss", "reward", user_id))//10}",
+                                  f"{int(get_from_db("user", "balance", user_id)) + int(get_from_db("boss", "reward", user_id))//3}",
                                   user_id)
                         set_in_db("boss", "reward", f"{0}", user_id)
                         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                                               text=f"{get_from_db("user", "username", user_id)}, награда собрана!")
+
+                    elif call.data == "rebith_top":
+                        asyncio.run(rebith_top(call))
+                    elif call.data == "balance_top":
+                        asyncio.run(balance_top(call))
+                    elif call.data == "deposit_top":
+                        asyncio.run(deposit_top(call))
 
     except:
         pass
