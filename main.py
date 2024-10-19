@@ -65,7 +65,7 @@ def callback_inline(call):
                     elif call.data == "claim_reward" and int(get_from_db("boss", "reward", user_id)) > 0:
                         user_id = call.from_user.id
                         set_in_db("user", "balance",
-                                  f"{int(get_from_db("user", "balance", user_id)) + int(get_from_db("boss", "reward", user_id))//3}",
+                                  f"{int(get_from_db("user", "balance", user_id)) + int(get_from_db("boss", "reward", user_id))}",
                                   user_id)
                         set_in_db("boss", "reward", f"{0}", user_id)
                         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
@@ -94,7 +94,7 @@ def any_text(message):
         elif text == "/vip":
             asyncio.run(vip(message))
 
-        elif text == "/top":
+        elif text in ["/top", "топ"]:
             asyncio.run(top(message))
 
         isVip = int(get_from_db("user", "isVip", user_id))
@@ -206,8 +206,8 @@ def any_text(message):
                 except:
                     bot.reply_to(message, "Пользователя нет в базе данных.")
 
-    except:
-        pass
+    except Exception as e:
+        print(e)
 
 
 bot.polling()

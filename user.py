@@ -42,14 +42,14 @@ async def information(message):
                                    url='https://telegra.ph/Your-foxibot-Informaciya-09-30')).add(
         types.InlineKeyboardButton("Поддержать бота",
                                    url='https://www.donationalerts.com/r/gert1m'))
-    bot.reply_to(message, "Информация отправлена в лс бота")
+    bot.reply_to(message, "Информация отправлена в [лс](https://t.me/Your_foxibot) бота", parse_mode='markdown')
     bot.send_message(message.from_user.id, f"Информация по использованию лсчк бота.",
                      reply_markup=inline_buttons)
 
 
 async def vip(message):
     user_id = message.from_user.id
-    bot.reply_to(message, "Информация отправлена в лс бота")
+    bot.reply_to(message, "Информация отправлена в [лс](https://t.me/Your_foxibot) бота", parse_mode='markdown')
     inline_buttons = types.InlineKeyboardMarkup(row_width=1).add(
         types.InlineKeyboardButton("Привилегии вип пользователя",
                                    url='https://telegra.ph/Your-foxibot-vip-info-10-05'))

@@ -81,14 +81,14 @@ async def boss_reward():
     player_list = get_all_from_db("boss", "", "id")
     for i in range(len(player_list)):
         if int(str(player_list[i])[1:-2]) > 0 and int(
-                get_from_db("boss", "reward", int(str(player_list[i])[1:-2])))//3 > 0:
+                get_from_db("boss", "reward", int(str(player_list[i])[1:-2]))) > 0:
             user_id = int(str(player_list[i])[1:-2])
             try:
                 bot.send_message(user_id, "Босс повержен! Все пользователи получили награду.")
             except:
                 pass
             set_in_db("user", "balance",
-                      f"{int(get_from_db("user", "balance", user_id)) + int(get_from_db("boss", "reward", user_id)) // 3}",
+                      f"{int(get_from_db("user", "balance", user_id)) + int(get_from_db("boss", "reward", user_id))}",
                       user_id)
             set_in_db("boss", "reward", f"{0}", user_id)
             set_in_db("boss", "combo", f"{0}", user_id)
@@ -275,10 +275,10 @@ async def reward(message):
         InlineKeyboardButton("Забрать досрочно", callback_data="claim_reward"))
     user_id = message.from_user.id
     reward = int(get_from_db("boss", "reward", user_id))
-    if reward // 3 > 0:
+    if reward > 0:
         bot.reply_to(message,
-                     f"После победы над боссом вы получите {reward // 3} {"лисокойн" + get_name_coin(reward // 3)}",
+                     f"После победы над боссом вы получите {reward} {"лисокойн" + get_name_coin(reward)}",
                      reply_markup=buttons)
     else:
         bot.reply_to(message,
-                     f"После победы над боссом вы получите {reward // 3} {"лисокойн" + get_name_coin(reward // 3)}", )
+                     f"После победы над боссом вы получите {reward} {"лисокойн" + get_name_coin(reward)}", )

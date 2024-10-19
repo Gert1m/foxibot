@@ -1,5 +1,3 @@
-from os.path import split
-
 from telebot import types
 
 from db import *
@@ -28,10 +26,10 @@ async def top(message):
     top_rebith.sort()
     for i in range(10):
         username = get_from_db("user", "username", int(top_rebith[-i - 1].split()[-1]))
-        text_with_top = text_with_top + "@" + username + " - " + top_rebith[-i - 1].split()[
+        text_with_top = text_with_top + f"[{username}](https://t.me/{username})" + " - " + top_rebith[-i - 1].split()[
             -2] + f" ребитх{get_name_coin(int(top_rebith[-i - 1].split()[-2]))}\n"
 
-    bot.reply_to(message, text=text_with_top, reply_markup=keyboard)
+    bot.reply_to(message, text=text_with_top, reply_markup=keyboard, parse_mode='markdown')
 
 
 async def rebith_top(message):
@@ -50,11 +48,11 @@ async def rebith_top(message):
     top_rebith.sort(key=myFunc)
     for i in range(10):
         username = get_from_db("user", "username", int(top_rebith[-i - 1][-1]))
-        text_with_top = text_with_top + "@" + username + " - " + top_rebith[-i - 1][
+        text_with_top = text_with_top + f"[{username}](https://t.me/{username})" + " - " + top_rebith[-i - 1][
             -2] + f" ребитх{get_name_coin(int(top_rebith[-i - 1][-2]))}\n"
 
     bot.edit_message_text(chat_id=message.message.chat.id, message_id=message.message.message_id, text=text_with_top,
-                          reply_markup=keyboard)
+                          reply_markup=keyboard, parse_mode='markdown')
 
 
 def balance_top(message):
@@ -74,11 +72,11 @@ def balance_top(message):
     top_balance.sort(key=myFunc)
     for i in range(10):
         username = get_from_db("user", "username", int(top_balance[-i - 1][-1]))
-        text_with_top = text_with_top + "@" + username + " - " + top_balance[-i - 1][
+        text_with_top = text_with_top + f"[{username}](https://t.me/{username})" + " - " + top_balance[-i - 1][
             -2] + f" лисокойн{get_name_coin(int(top_balance[-i - 1][-2]))}\n"
 
     bot.edit_message_text(chat_id=message.message.chat.id, message_id=message.message.message_id, text=text_with_top,
-                          reply_markup=keyboard)
+                          reply_markup=keyboard, parse_mode='markdown')
 
 
 def deposit_top(message):
@@ -98,8 +96,8 @@ def deposit_top(message):
     top_deposit.sort(key=myFunc)
     for i in range(10):
         username = get_from_db("trade", "username", int(top_deposit[-i - 2][-1]))
-        text_with_top = text_with_top + "@" + username + " - " + top_deposit[-i - 2][
+        text_with_top = text_with_top + f"[{username}](https://t.me/{username})" + " - " + top_deposit[-i - 2][
             0] + f" лисокойн{get_name_coin(int(top_deposit[-i - 2][0]))}\n"
 
     bot.edit_message_text(chat_id=message.message.chat.id, message_id=message.message.message_id, text=text_with_top,
-                          reply_markup=keyboard)
+                          reply_markup=keyboard, parse_mode='markdown')
