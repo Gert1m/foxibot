@@ -39,7 +39,7 @@ async def attack(message):
     lvlVision = int(get_from_db("boss", "lvlVision", user_id))
     lvlCrit = int(get_from_db("boss", "lvlCrit", user_id))
     isVip = int(get_from_db("user", "isVip", user_id))
-    isPlaying = randint(1, int(10 + 2 * lvlVision) if isVip <= 0 else int((10 + 2 * lvlVision) * 1.5))
+    isPlaying = randint(1, int(10 + lvlVision) if isVip <= 0 else int((10 + lvlVision) * 1.5))
     combo = int(get_from_db("boss", "combo", user_id))
     combo_mp = int(combo / 3) if combo >= 3 else 1
     if int(get_from_db("boss", "damage", -1)) <= 0:
@@ -54,13 +54,13 @@ async def attack(message):
         await boss_reward()
 
     elif isPlaying != 1:
-        crit_hit = randint(1, 11 - lvlCrit)
+        crit_hit = randint(1, 20 - lvlCrit)
         set_in_db("boss", "combo", f"{combo + 1}", user_id)
         set_in_db("boss", "damage",
-                  f"{((1 + lvlDamage) * combo_mp if crit_hit != 1 else (2 + lvlDamage) * combo_mp) + int(get_from_db("boss", "damage", user_id))}",
+                  f"{((1 + lvlDamage//2) * combo_mp if crit_hit != 1 else (2 + lvlDamage//2) * combo_mp) + int(get_from_db("boss", "damage", user_id))}",
                   user_id)
         set_in_db("boss", "damage",
-                  f"{int(get_from_db("boss", "damage", -1)) - ((1 + lvlDamage) * combo_mp if crit_hit != 1 else (2 + lvlDamage) * combo_mp)}",
+                  f"{int(get_from_db("boss", "damage", -1)) - ((1 + lvlDamage//2) * combo_mp if crit_hit != 1 else (2 + lvlDamage//2) * combo_mp)}",
                   -1)
         await attack(message)
 
@@ -105,9 +105,9 @@ async def upgrade(message):
     lvlVision = int(get_from_db("boss", "lvlVision", user_id))
     lvlCrit = int(get_from_db("boss", "lvlCrit", user_id))
 
-    set_in_db("boss", "costCrit", f"{int(120 * (1.5 ** lvlCrit)) * (1 + rebith / 4)}", user_id)
-    set_in_db("boss", "costVision", f"{int(240 * (1.5 ** lvlVision)) * (1 + rebith / 4)}", user_id)
-    set_in_db("boss", "costDamage", f"{int(90 * (1.5 ** lvlDamage)) * (1 + rebith / 4)}", user_id)
+    set_in_db("boss", "costCrit", f"{int((120 * (1.5 ** lvlCrit)) * (1 + rebith / 4))}", user_id)
+    set_in_db("boss", "costVision", f"{int((240 * (1.5 ** lvlVision)) * (1 + rebith / 4))}", user_id)
+    set_in_db("boss", "costDamage", f"{int((90 * (1.5 ** lvlDamage)) * (1 + rebith / 4))}", user_id)
 
     costDamage = int(get_from_db("boss", "costDamage", user_id))
     costVision = int(get_from_db("boss", "costVision", user_id))
@@ -227,7 +227,7 @@ async def rebith(message):
     if lvlVision == 5 and lvlCrit == 10 and lvlDamage == 10:
         bot.reply_to(message,
                      f"Вы хотите сделать ребитх? Это сбросит весь ваш текущий прогресс но даст небольшой бонус в дальнейшем.\nЦена ребитха {int(450 + 450 * (1 + rebith / 10 * 3))}.",
-                     reply_markap=buttons)
+                     reply_markup=buttons)
     else:
         bot.reply_to(message, f"Чтобы сделать ребитх надо сначала улучшить все атрибуты в /upgrade до максимума.")
 

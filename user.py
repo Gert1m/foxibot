@@ -26,7 +26,9 @@ async def add_user(message):
 
     else:
         set_in_db("boss", "username", f"{message.from_user.username}", message.from_user.id)
-    bot.reply_to(message, "Бот обновлён, информация по использованию отправлена в лс бота.", parse_mode='html')
+    bot.reply_to(message,
+                 "Бот обновлён, информация по использованию отправлена в [ЛС бота](https://t.me/Your_foxibot).",
+                 parse_mode='markdown') if message.from_user.id != message.chat.id else False
     await information(message)
 
 
@@ -42,14 +44,16 @@ async def information(message):
                                    url='https://telegra.ph/Your-foxibot-Informaciya-09-30')).add(
         types.InlineKeyboardButton("Поддержать бота",
                                    url='https://www.donationalerts.com/r/gert1m'))
-    bot.reply_to(message, "Информация отправлена в [лс](https://t.me/Your_foxibot) бота", parse_mode='markdown')
+    bot.reply_to(message, "Информация отправлена в [ЛС бота](https://t.me/Your_foxibot)",
+                 parse_mode='markdown') if message.from_user.id != message.chat.id else False
     bot.send_message(message.from_user.id, f"Информация по использованию лсчк бота.",
                      reply_markup=inline_buttons)
 
 
 async def vip(message):
     user_id = message.from_user.id
-    bot.reply_to(message, "Информация отправлена в [лс](https://t.me/Your_foxibot) бота", parse_mode='markdown')
+    bot.reply_to(message, "Информация отправлена в [ЛС бота](https://t.me/Your_foxibot)",
+                 parse_mode='markdown') if message.from_user.id != message.chat.id else False
     inline_buttons = types.InlineKeyboardMarkup(row_width=1).add(
         types.InlineKeyboardButton("Привилегии вип пользователя",
                                    url='https://telegra.ph/Your-foxibot-vip-info-10-05'))

@@ -20,14 +20,14 @@ async def top(message):
     text_with_top = "Топ пользователей по ребитхам:\n"
     top = get_all_from_db("user", "", "*")
     for row in top:
-        row = str(row[-1]) + " " + str(row[0])
-        top_rebith.append(str(row))
+        row = (str(row[-1]) + " " + str(row[0])).split()
+        top_rebith.append(row)
 
-    top_rebith.sort()
+    top_rebith.sort(key=myFunc)
     for i in range(10):
-        username = get_from_db("user", "username", int(top_rebith[-i - 1].split()[-1]))
-        text_with_top = text_with_top + f"[{username}](https://t.me/{username})" + " - " + top_rebith[-i - 1].split()[
-            -2] + f" ребитх{get_name_coin(int(top_rebith[-i - 1].split()[-2]))}\n"
+        username = get_from_db("user", "username", int(top_rebith[-i - 1][-1]))
+        text_with_top = text_with_top + f"[{username}](https://t.me/{username})" + " - " + top_rebith[-i - 1][
+            -2] + f" ребитх{get_name_coin(int(top_rebith[-i - 1][-2]))}\n"
 
     bot.reply_to(message, text=text_with_top, reply_markup=keyboard, parse_mode='markdown')
 
