@@ -11,42 +11,50 @@ def get_name_coin(value: int):
     return name_coin
 
 
-def get_all_from_db(file_name: str, func: str, value_name: str):
+# получить все значения из базы данных
+def get_all_from_db(file_name: str, func: str, value_name: str, table_name=None):
+    if table_name is None:
+        table_name = file_name
     connect = sqlite3.connect(f"{file_name}.db")
     cursor = connect.cursor()
-    table_name_in_file = file_name
-    cursor.execute(f"SELECT {func}{value_name} FROM {table_name_in_file}")
+    cursor.execute(f"SELECT {func}{value_name} FROM {table_name}")
     value = cursor.fetchall()
     connect.close()
     return list(value)
 
 
-def get_from_db(file_name: str, value_name: str, user_id: int):
+# получить одно значение из базы данных
+def get_from_db(file_name: str, value_name: str, user_id: int, table_name=None):
+    if table_name is None:
+        table_name = file_name
     connect = sqlite3.connect(f"{file_name}.db")
     cursor = connect.cursor()
-    table_name_in_file = file_name
-    cursor.execute(f"SELECT {value_name} FROM {table_name_in_file} WHERE id = {user_id}")  # id const
+    cursor.execute(f"SELECT {value_name} FROM {table_name} WHERE id = {user_id}")  # id const
     value = cursor.fetchone()[0]
     connect.close()
     return str(value)
 
 
-def set_in_db(file_name: str, value_name: str, value: str, user_id: int):
+# обновить значение в базе данных
+def set_in_db(file_name: str, value_name: str, value: str, user_id: int, table_name=None):
+    if table_name is None:
+        table_name = file_name
     connect = sqlite3.connect(f"{file_name}.db")
     cursor = connect.cursor()
-    table_name_in_file = file_name
-    cursor.execute(f"UPDATE {table_name_in_file} SET {value_name} = '{value}' WHERE id = {user_id}")  # id const
+    cursor.execute(f"UPDATE {table_name} SET {value_name} = '{value}' WHERE id = {user_id}")  # id const
     connect.commit()
     connect.close()
 
 
-def add_in_db(file_name: str, value_name: str, value: str):
+# добавить значение в базу данных
+def add_in_db(file_name: str, value_name: str, value: str, table_name=None):
+    if table_name is None:
+        table_name = file_name
     connect = sqlite3.connect(f"{file_name}.db")
     cursor = connect.cursor()
-    table_name_in_file = file_name
     try:
-        cursor.execute(f"INSERT INTO {table_name_in_file} ({value_name}) VALUES ({value})")
-    except:
+        cursor.execute(f"INSERT INTO {table_name} ({value_name}) VALUES ({value})")
+    except sqlite3.IntegrityError:
         pass
     connect.commit()
     connect.close()
