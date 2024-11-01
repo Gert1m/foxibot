@@ -25,7 +25,7 @@ async def deposit(message, value=None):
         value = int(value)
         max_deposit = int((bank_size - my_bank) / coefficient)
 
-        if balance <= value:  # проверка, что вклад меньше баланса
+        if balance < value:  # проверка, что вклад меньше баланса
             bot.reply_to(message,
                          f"Недостаточно лисокойнов\n"
                          f"Вы можете положить ещё `{max_deposit}` лисокойн{get_name_coin(max_deposit)}",

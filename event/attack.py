@@ -49,13 +49,16 @@ async def attack(message):
             isPlaying = randint(1, int(n))
 
         my_logs += f"Суммарный урон {total_damage}"
-        set_in_db("boss", "logs", f"{my_logs}", user_id)
+        if isVip != 0:
+            set_in_db("boss", "logs", f"{my_logs}", user_id)
+        else:
+            set_in_db("boss", "logs", f"{None}", user_id)
 
         balance = int(get_from_db("user", "balance", user_id))
         combo = f"Серия из {combo} удар{get_name_coin(combo) if combo % 10 != 1 else "а"}" if combo < lvlDef + 5 else "Максимальная серия ударов"
 
         buttons = InlineKeyboardMarkup()
-        inline_button = InlineKeyboardButton("Как все прошло?", callback_data="logs")
+        inline_button = InlineKeyboardButton("Как все прошло?", callback_data=f"logs_{user_id}")
         buttons.row(inline_button)
 
         bot.reply_to(message,
@@ -88,12 +91,23 @@ async def wait(message, next_attack):
         seconds = "секунд"
 
     bot.reply_to(message,
-                 f"Подождите еще {(next_attack - int(time())) // 60} {name_time} {(next_attack - int(time())) % 60} {seconds}")
+                 f"Недавно вы уже совершали нападение подождите еще {(next_attack - int(time())) // 60} {name_time} {(next_attack - int(time())) % 60} {seconds}")
 
 
 async def logs(call):
     user_id = call.from_user.id
     my_logs = get_from_db("boss", "logs", user_id)
-    bot.edit_message_text(chat_id=call.message.chat.id,
+    if my_logs == "None":
+        my_logs = "Информация по рейду доступна только вип пользователям"
+        bot.edit_message_text(chat_id=call.message.chat.id,
+                              message_id=call.message.message_id,
+                              text=my_logs)
+    elif str(my_logs).split()[-1] == str(call.message.text).split()[-1]:
+        bot.edit_message_text(chat_id=call.message.chat.id,
                           message_id=call.message.message_id,
                           text=my_logs)
+    else:
+        my_logs = "Информация недоступна"
+        bot.edit_message_text(chat_id=call.message.chat.id,
+                              message_id=call.message.message_id,
+                              text=my_logs)

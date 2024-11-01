@@ -6,14 +6,14 @@ from upgrade.upgrade import upgrade
 
 
 async def any_callback(call):
-    callback = call.data
-    if callback == "logs":
+    callback = str(call.data)
+    if callback.count("logs") != 0:
         await logs(call)
-    elif callback == "upgrade":
+    elif callback.count("upgrade") != 0:
         await upgrade(call)
-    elif callback == "damage_up_info":
+    elif callback.count("damage_up_info") != 0:
         await damage(call)
-    elif callback == "vision_up_info":
+    elif callback.count("vision_up_info") != 0:
         await defence(call)
-    elif callback == "crit_uo_info":
+    elif callback.count("crit_uo_info") != 0:
         await crit(call)

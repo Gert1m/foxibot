@@ -14,9 +14,9 @@ async def upgrade(message):
 
     buttons = InlineKeyboardMarkup()
 
-    damage_button = InlineKeyboardButton("🔪", callback_data="damage_up_info")
-    vision_button = InlineKeyboardButton("🛡️", callback_data="vision_up_info")
-    crit_button = InlineKeyboardButton("🎯", callback_data="crit_uo_info")
+    damage_button = InlineKeyboardButton("🔪", callback_data=f"damage_up_info_{user_id}")
+    vision_button = InlineKeyboardButton("🛡️", callback_data=f"vision_up_info_{user_id}")
+    crit_button = InlineKeyboardButton("🎯", callback_data=f"crit_uo_info_{user_id}")
 
     buttons.row(damage_button, vision_button, crit_button)
     upgrade_text = (

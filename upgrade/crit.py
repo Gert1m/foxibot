@@ -40,6 +40,8 @@ async def crit(message, n=None):
         bot.reply_to(message,
                      f"Успешно произведено {total_upgrade} улучшений точности\n"
                      f"Потрачено {total_cost} лисокойн{get_name_coin(total_cost)}")
+        total_spent = int(get_from_db("upgrade", "total_spent", user_id))
+        set_in_db("upgrade", "total_spent", f"{total_spent + total_cost}", user_id)
     elif n > 0:  # n количество улучшений
         total_cost = costCrit
         if lvlCrit + n >= 30:
@@ -61,6 +63,8 @@ async def crit(message, n=None):
             bot.reply_to(message,
                          f"Успешно произведено {n} улучшений точности\n"
                          f"Потрачено {total_cost} лисокойн{get_name_coin(total_cost)}")
+            total_spent = int(get_from_db("upgrade", "total_spent", user_id))
+            set_in_db("upgrade", "total_spent", f"{total_spent + total_cost}", user_id)
     else:
         bot.reply_to(message,
                      f"Количество улучшений должно быть больше 0")
@@ -86,7 +90,7 @@ async def crit_info(message, lvlCrit, costCrit, balance):
     except AttributeError:
         call = message
         buttons = InlineKeyboardMarkup()
-        inline_button = InlineKeyboardButton("↩️ назад к улучшениям", callback_data="upgrade")
+        inline_button = InlineKeyboardButton("↩️ назад к улучшениям", callback_data=f"upgrade_{call.from_user.id}")
         buttons.row(inline_button)
         bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
                               text=f"{info_text}", parse_mode='markdown', reply_markup=buttons)
