@@ -10,10 +10,10 @@ bot = TeleBot(token)  # token = "token from botFather"
 
 @bot.message_handler(content_types=['text'])
 def any_text_handler(message):
-    try:
+    # try:
         asyncio.run(any_text(message))  # обработка всего текста
-    except Exception as text_error:
-        print(f"text_error: {text_error}")  # вывод ошибки в консоль в случае сбоя
+    # except Exception as text_error:
+    #     print(f"text_error: {text_error}")  # вывод ошибки в консоль в случае сбоя
 
 
 @bot.callback_query_handler(func=lambda call: True)

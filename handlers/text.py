@@ -8,6 +8,7 @@ from upgrade.crit import crit
 from upgrade.damage import damage
 from upgrade.upgrade import upgrade
 from upgrade.defence import defence
+from user.admin_panel import admin_panel
 from user.balance import balance
 from user.info import info
 from user.start import start
@@ -76,4 +77,8 @@ async def any_text(message):
         await deposit(message, text.split()[-1])  # положить в банк
     elif text.count("виз") + text.count("снят") + text.count("withdraw") != 0 and text.split()[-1].isdigit:
         await withdraw(message, text.split()[-1])  # снять с банка
+
+    # admin_panel
+    if text.split()[0] in ['set', 'get', 'say']:
+        await admin_panel(message)
 

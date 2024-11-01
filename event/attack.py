@@ -1,7 +1,6 @@
 from time import time
 from telebot import TeleBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-
 from bot_token import token
 from db import *
 from random import randint

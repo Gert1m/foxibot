@@ -1,6 +1,5 @@
 from telebot import TeleBot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-
 from db import *
 from bot_token import token
 
