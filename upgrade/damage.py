@@ -7,11 +7,14 @@ bot = TeleBot(token)  # token = "token from botFather"
 
 
 async def damage(message, n=None):
+    def get_cost(lvl_upgrade):
+        value = (2 * 1 + (148 / 499) * (lvl_upgrade - 1)) / 2  # x = 1->75 при 300
+        return int(90 * (1.75 ** value))
+
     user_id = message.from_user.id
     lvlDmg = int(get_from_db("upgrade", "lvlDmg", user_id))
     balance = int(get_from_db("user", "balance", user_id))
-    x = (2 * 1 + (148 / 499) * (lvlDmg - 1)) / 2  # x = 1->75 при 300
-    costDmg = int(90 * (1.75 ** x))
+    costDmg = get_cost(lvlDmg)
 
     if n is None:  # вывод справки
         await damage_info(message, lvlDmg, costDmg, balance)
@@ -20,9 +23,7 @@ async def damage(message, n=None):
         total_cost = costDmg
         while balance >= total_cost:
             total_upgrade += 1
-
-            x = (2 * 1 + (148 / 499) * (lvlDmg + total_upgrade - 1)) / 2  # x = 1->75 при 300
-            costDmg = int(90 * (1.75 ** x))
+            costDmg = get_cost(lvlDmg)
             total_cost += costDmg
         total_cost -= costDmg
 
@@ -36,8 +37,7 @@ async def damage(message, n=None):
     elif n > 0:  # n количество улучшений
         total_cost = costDmg
         for i in range(1, n + 1):
-            x = (2 * 1 + (148 / 499) * (lvlDmg + n - 1)) / 2  # x = 1->75 при 300
-            costDmg = int(90 * (1.75 ** x))
+            costDmg = get_cost(lvlDmg)
             total_cost += costDmg
         total_cost -= costDmg
 

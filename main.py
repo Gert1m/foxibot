@@ -10,16 +10,16 @@ bot = TeleBot(token)  # token = "token from botFather"
 
 @bot.message_handler(content_types=['text'])
 def any_text_handler(message):
-    # try:
+    try:
         asyncio.run(any_text(message))  # обработка всего текста
-    # except Exception as text_error:
-    #     print(f"text_error: {text_error}")  # вывод ошибки в консоль в случае сбоя
+    except Exception as text_error:
+        print(f"text_error: {text_error}")  # вывод ошибки в консоль в случае сбоя
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def any_callback_handler(call):
     try:
-        if str(call.data).split("_")[-1] == str(call.from_user.id):  # проверка, что инлайн кнопку нажал не сторонний человек
+        if str(call.data).count(f"{call.from_user.id}") != 0:  # проверка, что инлайн кнопку нажал не сторонний человек
             asyncio.run(any_callback(call))  # обработка всех инлайн кнопок
     except Exception as callback_error:
         print(f"callback_error: {callback_error}")  # вывод ошибки в консоль в случае сбоя

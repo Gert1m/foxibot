@@ -12,6 +12,8 @@ async def deposit(message, value=None):
     isVip = int(get_from_db("user", "isVip", user_id))
     bank_size = 5000
     coefficient = 0.99 if isVip != 0 else 0.8
+    max_deposit = int((bank_size - my_bank) / coefficient)
+    max_deposit = 0 if max_deposit < 0 else max_deposit
 
     if value is None:  # вывод справки по вкладу
         balance = int(get_from_db("user", "balance", user_id))
@@ -21,55 +23,69 @@ async def deposit(message, value=None):
                      "`положить `{кол-во}\n\n"
                      "Ваш баланс " + f"{balance} лисокойн{get_name_coin(balance)}",
                      parse_mode='markdown')
-    elif value.isdigit():  # проверка, что снятие число
+    elif value.isdigit() and int(value) > 0:  # проверка, что снятие число
         value = int(value)
-        max_deposit = int((bank_size - my_bank) / coefficient)
 
         if balance < value:  # проверка, что вклад меньше баланса
             bot.reply_to(message,
                          f"Недостаточно лисокойнов\n"
                          f"Вы можете положить ещё `{max_deposit}` лисокойн{get_name_coin(max_deposit)}",
                          parse_mode='markdown')
-        elif my_bank + int(value * coefficient) >= bank_size:  # проверка, что банк не переполнится
+        elif my_bank + int(value * coefficient) > bank_size:  # проверка, что банк не переполнится
             bot.reply_to(message,
                          f"Сумма вклада слишком велика\n"
                          f"Вы можете положить ещё `{max_deposit}` лисокойн{get_name_coin(max_deposit)}",
                          parse_mode='markdown')
         else:
-            value = int(value * 0.99) if isVip != 0 else int(
-                value * 0.8)  # комиссия 20% для не вип и 1% для вип пользователей
-            if bank_size - value - my_bank <= 1:
+            value_minus = value - int(value * coefficient)
+            value = int(value * coefficient)  # комиссия 20% для не вип и 1% для вип пользователей
+
+            if bank_size - value - my_bank == 1:
+                value += 1
+
                 set_in_db("trade", "bank", f"{bank_size}", user_id)
-            else:
-                set_in_db("trade", "bank", f"{my_bank + value}", user_id)
-
-            set_in_db("user", "balance", f"{balance - value}", user_id)
-
-            if bank_size - value - my_bank <= 1:
-                bot.reply_to(message,
-                             f"Успешно вложено {value + 1} лисокойн{get_name_coin(value + 1)}\n"
-                             f"Комиссия составила {"1%" if isVip != 0 else "20%"}")
-            else:
+                set_in_db("user", "balance", f"{balance - value - value_minus}", user_id)
                 bot.reply_to(message,
                              f"Успешно вложено {value} лисокойн{get_name_coin(value)}\n"
-                             f"Комиссия составила {"1%" if isVip != 0 else "20%"}")
+                             f"Комиссия составила {int(value * 0.01) + 1 if isVip != 0 else int(value * 0.2) + 1}")
+            elif bank_size - value - my_bank <= 0:
+                bot.reply_to(message,
+                             text="В банке больше нет места для вклада")
+            else:
+                set_in_db("trade", "bank", f"{my_bank + value}", user_id)
+                bot.reply_to(message,
+                             f"Успешно вложено {value} лисокойн{get_name_coin(value)}\n"
+                             f"Комиссия составила {int(value * 0.01) + 1 if isVip != 0 else int(value * 0.2) + 1}")
+                set_in_db("user", "balance", f"{balance - value - value_minus}", user_id)
 
     elif value.lower().replace("ё", "е") in {'все', 'all'} and balance != 0:
-        value = int(balance * 0.99) if isVip != 0 else int(
-            balance * 0.8)  # комиссия 20% для не вип и 1% для вип пользователей
-
-        set_in_db("user", "balance", f"{balance - balance}", user_id)
-        set_in_db("trade", "bank", f"{my_bank + value}", user_id)
-
-        if bank_size - value - my_bank <= 1:
+        if max_deposit == 0:
             bot.reply_to(message,
-                         f"Успешно вложено {value + 1} лисокойн{get_name_coin(value + 1)}\n"
-                         f"Комиссия составила {"1%" if isVip != 0 else "20%"}")
+                         text="В банке больше нет места для вклада")
         else:
-            bot.reply_to(message,
-                         f"Успешно вложено {value} лисокойн{get_name_coin(value)}\n"
-                         f"Комиссия составила {"1%" if isVip != 0 else "20%"}")
+            if balance > max_deposit:
+                value = max_deposit
+            else:
+                value = balance
+
+            value_minus = value - int(value * coefficient)
+            value = int(value * coefficient)  # комиссия 20% для не вип и 1% для вип пользователей
+
+            if bank_size - value - my_bank == 1:
+                value += 1
+
+                set_in_db("trade", "bank", f"{bank_size}", user_id)
+                set_in_db("user", "balance", f"{balance - value - value_minus}", user_id)
+                bot.reply_to(message,
+                             f"Успешно вложено {value} лисокойн{get_name_coin(value)}\n"
+                             f"Комиссия составила {value_minus} лисокойн{get_name_coin(value_minus)}")
+            else:
+                set_in_db("trade", "bank", f"{my_bank + value}", user_id)
+                set_in_db("user", "balance", f"{balance - value - value_minus}", user_id)
+                bot.reply_to(message,
+                             f"Успешно вложено {value} лисокойн{get_name_coin(value)}\n"
+                             f"Комиссия составила {value_minus} лисокойн{get_name_coin(value_minus)}")
 
     else:
         bot.reply_to(message,
-                     f"Вложение должно быть числом")
+                     f"Вложение должно быть числом, причём больше нуля")

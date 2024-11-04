@@ -7,11 +7,14 @@ bot = TeleBot(token)  # token = "token from botFather"
 
 
 async def crit(message, n=None):
+    def get_cost(lvl_upgrade):
+        value = (3 - (21 / 1450) * (lvl_upgrade - 1)) / 2  # x = 1.5->1.29
+        return int(120 * (value ** lvl_upgrade))
+
     user_id = message.from_user.id
     lvlCrit = int(get_from_db("upgrade", "lvlCrit", user_id))
     balance = int(get_from_db("user", "balance", user_id))
-    x = (3 - (21 / 1450) * (lvlCrit - 1)) / 2  # x = 1.5->1.29
-    costCrit = int(120 * (x ** lvlCrit))
+    costCrit = get_cost(lvlCrit)
 
     if n is None:  # вывод справки
         await crit_info(message, lvlCrit, costCrit, balance)
@@ -28,9 +31,7 @@ async def crit(message, n=None):
                 bot.reply_to(message,
                              f"Точность будет улучшена на максимум, теперь вы можете бить даже с закрытыми глазами...")
                 break
-
-            x = (3 - (21 / 1450) * (lvlCrit + total_upgrade - 1)) / 2  # x = 1.5->1.29
-            costCrit = int(120 * (x ** (lvlCrit + total_upgrade)))
+            costCrit = get_cost(lvlCrit)
             total_cost += costCrit
         total_cost -= costCrit
 
@@ -48,8 +49,7 @@ async def crit(message, n=None):
             bot.reply_to(message,
                          f"Точность будет улучшена на максимум, теперь вы сможете бить даже с закрытыми глазами...")
         for i in range(1, n + 1):
-            x = (3 - (21 / 1450) * (lvlCrit + i - 1)) / 2  # x = 1.5->1.29
-            costCrit = int(120 * (x ** (lvlCrit + i)))
+            costCrit = get_cost(lvlCrit)
             total_cost += costCrit
         total_cost -= costCrit
 

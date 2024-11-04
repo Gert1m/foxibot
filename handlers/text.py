@@ -1,5 +1,6 @@
 import asyncio
 from event.attack import attack
+from top.upgrade import upgrade_top
 from trade.bank import bank, update_coefficient, coefficient
 from trade.deposit import deposit
 from trade.farm import farm
@@ -44,6 +45,10 @@ async def any_text(message):
     # event методы
     elif text.count("атак") + text.count("рейд") + text.count("attack") != 0:
         await attack(message)  # рейд босса
+
+    # top методы
+    elif text.count("топ") + text.count("лидер") + text.count("top") != 0:
+        await upgrade_top(message)
 
     # upgrade методы
     elif text.count("кач") + text.count("улучш") + text.count("upgrade") != 0:

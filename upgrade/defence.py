@@ -7,11 +7,14 @@ bot = TeleBot(token)  # token = "token from botFather"
 
 
 async def defence(message, n=None):
+    def get_cost(lvl_upgrade):
+        value = ((2 * 1 + (218 / 249) * (lvl_upgrade - 1)) / 2)  # x = 1->110 при 250
+        return int(240 * (1.65 ** value))
+
     user_id = message.from_user.id
     lvlDef = int(get_from_db("upgrade", "lvlDef", user_id))
     balance = int(get_from_db("user", "balance", user_id))
-    x = (2 * 1 + (218 / 249) * (lvlDef - 1)) / 2  # x = 1->110 при 250
-    costDef = int(240 * (1.65 ** x))
+    costDef = get_cost(lvlDef)
 
     if n is None:  # вывод справки
         await defence_info(message, lvlDef, costDef, balance)
@@ -20,9 +23,7 @@ async def defence(message, n=None):
         total_cost = costDef
         while balance >= total_cost:
             total_upgrade += 1
-
-            x = (2 * 1 + (218 / 249) * (lvlDef + total_upgrade - 1)) / 2  # x = 1->110 при 250
-            costDef = int(240 * (1.65 ** x))
+            costDef = get_cost(lvlDef)
             total_cost += costDef
         total_cost -= costDef
 
@@ -36,8 +37,7 @@ async def defence(message, n=None):
     elif n > 0:  # n количество улучшений
         total_cost = costDef
         for i in range(1, n + 1):
-            x = (2 * 1 + (218 / 249) * (lvlDef + n - 1)) / 2  # x = 1->110 при 250
-            costDef = int(240 * (1.65 ** x))
+            costDef = get_cost(lvlDef)
             total_cost += costDef
         total_cost -= costDef
 
