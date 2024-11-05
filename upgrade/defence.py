@@ -23,7 +23,7 @@ async def defence(message, n=None):
         total_cost = costDef
         while balance >= total_cost:
             total_upgrade += 1
-            costDef = get_cost(lvlDef)
+            costDef = get_cost(lvlDef + total_upgrade)
             total_cost += costDef
         total_cost -= costDef
 
@@ -37,7 +37,7 @@ async def defence(message, n=None):
     elif n > 0:  # n количество улучшений
         total_cost = costDef
         for i in range(1, n + 1):
-            costDef = get_cost(lvlDef)
+            costDef = get_cost(lvlDef + i)
             total_cost += costDef
         total_cost -= costDef
 

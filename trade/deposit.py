@@ -21,7 +21,7 @@ async def deposit(message, value=None):
         bot.reply_to(message,
                      "Чтобы положить лисокойны в банк введите:\n"
                      "`положить `{кол-во}\n\n"
-                     "Ваш баланс " + f"{balance} лисокойн{get_name_coin(balance)}",
+                     f"Ваш баланс {balance} лисокойн{get_name_coin(balance)}",
                      parse_mode='markdown')
     elif value.isdigit() and int(value) > 0:  # проверка, что снятие число
         value = int(value)
@@ -47,7 +47,7 @@ async def deposit(message, value=None):
                 set_in_db("user", "balance", f"{balance - value - value_minus}", user_id)
                 bot.reply_to(message,
                              f"Успешно вложено {value} лисокойн{get_name_coin(value)}\n"
-                             f"Комиссия составила {int(value * 0.01) + 1 if isVip != 0 else int(value * 0.2) + 1}")
+                             f"Комиссия составила {value_minus} лисокойн{get_name_coin(value_minus)}")
             elif bank_size - value - my_bank <= 0:
                 bot.reply_to(message,
                              text="В банке больше нет места для вклада")
@@ -55,7 +55,7 @@ async def deposit(message, value=None):
                 set_in_db("trade", "bank", f"{my_bank + value}", user_id)
                 bot.reply_to(message,
                              f"Успешно вложено {value} лисокойн{get_name_coin(value)}\n"
-                             f"Комиссия составила {int(value * 0.01) + 1 if isVip != 0 else int(value * 0.2) + 1}")
+                             f"Комиссия составила {value_minus} лисокойн{get_name_coin(value_minus)}")
                 set_in_db("user", "balance", f"{balance - value - value_minus}", user_id)
 
     elif value.lower().replace("ё", "е") in {'все', 'all'} and balance != 0:

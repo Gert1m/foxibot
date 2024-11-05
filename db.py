@@ -1,4 +1,5 @@
 import sqlite3
+import os
 
 
 def get_name_coin(value: int):
@@ -15,7 +16,9 @@ def get_name_coin(value: int):
 def get_all_from_db(file_name: str, func: str, value_name: str, table_name=None):
     if table_name is None:
         table_name = file_name
-    connect = sqlite3.connect(f"{file_name}.db")
+    cur_dir = os.path.dirname(__file__)
+    new_dir =os.path.relpath(f'..\\data\\{file_name}.db', cur_dir)
+    connect = sqlite3.connect(new_dir)
     cursor = connect.cursor()
     cursor.execute(f"SELECT {func}{value_name} FROM {table_name}")
     value = cursor.fetchall()
@@ -27,7 +30,9 @@ def get_all_from_db(file_name: str, func: str, value_name: str, table_name=None)
 def get_from_db(file_name: str, value_name: str, user_id: int, table_name=None):
     if table_name is None:
         table_name = file_name
-    connect = sqlite3.connect(f"{file_name}.db")
+    cur_dir = os.path.dirname(__file__)
+    new_dir = os.path.relpath(f'..\\data\\{file_name}.db', cur_dir)
+    connect = sqlite3.connect(new_dir)
     cursor = connect.cursor()
     cursor.execute(f"SELECT {value_name} FROM {table_name} WHERE id = {user_id}")  # id const
     value = cursor.fetchone()[0]
@@ -39,7 +44,9 @@ def get_from_db(file_name: str, value_name: str, user_id: int, table_name=None):
 def set_in_db(file_name: str, value_name: str, value: str, user_id: int, table_name=None):
     if table_name is None:
         table_name = file_name
-    connect = sqlite3.connect(f"{file_name}.db")
+    cur_dir = os.path.dirname(__file__)
+    new_dir = os.path.relpath(f'..\\data\\{file_name}.db', cur_dir)
+    connect = sqlite3.connect(new_dir)
     cursor = connect.cursor()
     cursor.execute(f"UPDATE {table_name} SET {value_name} = '{value}' WHERE id = {user_id}")  # id const
     connect.commit()
@@ -50,7 +57,9 @@ def set_in_db(file_name: str, value_name: str, value: str, user_id: int, table_n
 def add_in_db(file_name: str, value_name: str, value: str, table_name=None):
     if table_name is None:
         table_name = file_name
-    connect = sqlite3.connect(f"{file_name}.db")
+    cur_dir = os.path.dirname(__file__)
+    new_dir = os.path.relpath(f'..\\data\\{file_name}.db', cur_dir)
+    connect = sqlite3.connect(new_dir)
     cursor = connect.cursor()
     try:
         cursor.execute(f"INSERT INTO {table_name} ({value_name}) VALUES ({value})")

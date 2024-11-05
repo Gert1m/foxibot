@@ -17,10 +17,10 @@ from user.vip import vip
 
 
 async def any_text(message):
-    text = message.text.lower()  # наш текст
+    text = message.text.lower().replace("@your_foxibot", "")  # наш текст
     await asyncio.gather(farm(message), update_coefficient())
 
-    if len(text.split()) != 1:  # не обрабатывать сообщения больше чем из 1 слова
+    if len(text.split()) != 1 or len(text) > 10:  # не обрабатывать сообщения больше чем из 1 слова
         pass
     # user методы
     elif text.count("бал") + text.count("bal") != 0:
@@ -56,26 +56,26 @@ async def any_text(message):
     elif text.count("урон") + text.count("атк") + text.count("атака") + text.count("atk") != 0:
         if text.count("++") != 0:
             await damage(message, f"+")  # улучшений урона пока не кончатся деньги
-        elif text.count("+")!=0 and text.split("+")[-1].isdigit(): # проверка, что текст после '+' является числом
+        elif text.count("+") != 0 and text.split("+")[-1].isdigit():  # проверка, что текст после '+' является числом
             await damage(message, int(text.split("+")[-1]))  # несколько улучшений урона
         else:
             await damage(message)  # информация про улучшение урона
     elif text.count("дэф") + text.count("щит") + text.count("def") != 0:
         if text.count("++") != 0:
             await defence(message, f"+")  # улучшений защиты пока не кончатся деньги
-        elif text.count("+")!=0 and text.split("+")[-1].isdigit(): # проверка, что текст после '+' является числом
+        elif text.count("+") != 0 and text.split("+")[-1].isdigit():  # проверка, что текст после '+' является числом
             await defence(message, int(text.split("+")[-1]))  # несколько улучшений защиты
         else:
             await defence(message)  # информация про улучшение защиты
     elif text.count("крит") + text.count("точн") + text.count("crit") != 0:
         if text.count("++") != 0:
             await crit(message, f"+")  # улучшений точности пока не кончатся деньги
-        elif text.count("+")!=0 and text.split("+")[-1].isdigit(): # проверка, что текст после '+' является числом
+        elif text.count("+") != 0 and text.split("+")[-1].isdigit():  # проверка, что текст после '+' является числом
             await crit(message, int(text.split("+")[-1]))  # несколько улучшений точности
         else:
             await crit(message)  # информация про улучшение точности
 
-    if len(text.split()) != 2:  # не обрабатывать сообщения состоящие не из 2 слова
+    if len(text.split()) != 2 or len(text) > 15:  # не обрабатывать сообщения состоящие не из 2 слова
         pass
     # моментальные trade методы
     elif text.count("деп") + text.count("лож") + text.count("dep") != 0 and text.split()[-1].isdigit:
@@ -86,4 +86,3 @@ async def any_text(message):
     # admin_panel
     if text.split()[0] in ['set', 'get', 'say']:
         await admin_panel(message)
-

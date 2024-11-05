@@ -31,7 +31,7 @@ async def crit(message, n=None):
                 bot.reply_to(message,
                              f"Точность будет улучшена на максимум, теперь вы можете бить даже с закрытыми глазами...")
                 break
-            costCrit = get_cost(lvlCrit)
+            costCrit = get_cost(lvlCrit + total_upgrade)
             total_cost += costCrit
         total_cost -= costCrit
 
@@ -49,7 +49,7 @@ async def crit(message, n=None):
             bot.reply_to(message,
                          f"Точность будет улучшена на максимум, теперь вы сможете бить даже с закрытыми глазами...")
         for i in range(1, n + 1):
-            costCrit = get_cost(lvlCrit)
+            costCrit = get_cost(lvlCrit + i)
             total_cost += costCrit
         total_cost -= costCrit
 

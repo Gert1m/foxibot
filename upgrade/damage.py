@@ -23,7 +23,7 @@ async def damage(message, n=None):
         total_cost = costDmg
         while balance >= total_cost:
             total_upgrade += 1
-            costDmg = get_cost(lvlDmg)
+            costDmg = get_cost(lvlDmg + total_upgrade)
             total_cost += costDmg
         total_cost -= costDmg
 
@@ -37,7 +37,7 @@ async def damage(message, n=None):
     elif n > 0:  # n количество улучшений
         total_cost = costDmg
         for i in range(1, n + 1):
-            costDmg = get_cost(lvlDmg)
+            costDmg = get_cost(lvlDmg + i)
             total_cost += costDmg
         total_cost -= costDmg
 
