@@ -12,7 +12,9 @@ def any_text_handler(message):
     try:
         asyncio.run(any_text(message))  # обработка всего текста
     except Exception as text_error:
-        bot.send_message(2121424181, f"text_error: {text_error}")  # вывод ошибки в лс админа в случае сбоя
+        bot.send_message(2121424181,
+                         f"[{message.from_user.username}](tg://user?id={message.from_user.id}) вызвал text_error: {text_error}\ntext:{message.text}",
+                         parse_mode='markdown')  # вывод ошибки в лс админа в случае сбоя
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -21,7 +23,9 @@ def any_callback_handler(call):
         if str(call.data).count(f"{call.from_user.id}") != 0:  # проверка, что инлайн кнопку нажал не сторонний человек
             asyncio.run(any_callback(call))  # обработка всех инлайн кнопок
     except Exception as callback_error:
-        bot.send_message(2121424181, f"callback_error: {callback_error}")  # вывод ошибки в лс админа в случае сбоя
+        bot.send_message(2121424181,
+                         f"[{call.from_user.username}](tg://user?id={call.from_user.id}) вызвал callback_error: {callback_error}\ncallback:{call.data}",
+                         parse_mode='markdown')  # вывод ошибки в лс админа в случае сбоя
 
 
 if __name__ == "__main__":
