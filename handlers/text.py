@@ -20,7 +20,7 @@ async def any_text(message):
     text = message.text.lower().replace("@your_foxibot", "")  # наш текст
     await asyncio.gather(farm(message), update_coefficient())
 
-    if len(text.split()) != 1 or len(text) > 10:  # не обрабатывать сообщения больше чем из 1 слова
+    if len(text.split()) != 1 or len(text) > 11:  # не обрабатывать сообщения больше чем из 1 слова
         pass
     # user методы
     elif text.count("бал") + text.count("bal") != 0:

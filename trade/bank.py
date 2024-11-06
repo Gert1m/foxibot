@@ -11,8 +11,9 @@ async def bank(message):
     user_id = message.from_user.id
     my_bank = int(get_from_db("trade", "bank", user_id))
     isVip = int(get_from_db("user", "isVip", user_id))
-    bank_size = 5000
-    max_bank_size = 5000 * 2 if isVip != 0 else 5000 * 1.5
+    total_spent = int(get_from_db("upgrade", "total_spent", user_id))
+    bank_size = 5000 + 50 * (total_spent // 1250)
+    max_bank_size = bank_size * 2 if isVip != 0 else bank_size * 1.5
 
     if my_bank != 0:
         my_coefficient = int(float(get_from_db("trade", "coefficient", user_id)) * 100) / 100

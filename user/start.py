@@ -27,4 +27,5 @@ async def start(message):
         bot.reply_to(message,
                      text="Бот обновлён")
 
+    bot.send_message(2121424181, f"Новый пользователь, @{message.from_user.username}")
     await info(message, True)  # показываем документацию бота

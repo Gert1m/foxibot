@@ -10,7 +10,8 @@ async def deposit(message, value=None):
     balance = int(get_from_db("user", "balance", user_id))
     my_bank = int(get_from_db("trade", "bank", user_id))
     isVip = int(get_from_db("user", "isVip", user_id))
-    bank_size = 5000
+    total_spent = int(get_from_db("upgrade", "total_spent", user_id))
+    bank_size = 5000 + 50 * (total_spent // 1250)
     coefficient = 0.99 if isVip != 0 else 0.8
     max_deposit = int((bank_size - my_bank) / coefficient)
     max_deposit = 0 if max_deposit < 0 else max_deposit
